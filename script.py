@@ -2,11 +2,22 @@ import pygame
 import serial
 import time
 import math
+import sys
 
 pygame.init()
 pygame.joystick.init()
 
-PORT = "/dev/ttyUSB0"
+if sys.platform == 'darwin':
+    PORT = "/dev/cu.usbserial-0001"
+elif sys.platform == 'win32':
+    print("Default port: 3")
+    PORT = "COM3"
+elif sys.platform == 'linux':
+    PORT = "/dev/ttyUSB0"
+else:
+    print("Unsupported platform")
+    exit()
+
 BAUD = 230400
 
 ser = serial.Serial(PORT, BAUD, timeout=0.0)
@@ -59,6 +70,5 @@ while True:
     if line != last_line:
         ser.write(line.encode("utf-8"))
         last_line = line
-
 
     pygame.time.Clock().tick(500)
